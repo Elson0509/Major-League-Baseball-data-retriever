@@ -1,0 +1,95 @@
+main{
+    text-align: center;
+    background: #a5b29f;
+    width: 600px;
+    margin: 0 auto;
+    padding: 50px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    border-radius: 16px;
+}
+
+fieldset{
+    display: inline;
+    padding: 20px;
+    background: #DCE2C1;
+    border-radius: 16px;
+}
+
+fieldset select{
+    min-width: 150px;
+    width: 100%;
+    padding: 5px 0;
+    background: none transparent;
+    background: #ececec;
+}
+
+fieldset td{
+    min-width: 70px;
+
+}
+
+.date{
+    position: relative;
+}
+
+.date button{
+    margin-top: 20px;
+}
+
+.response{
+    margin: 30px 0 30px 0;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.response td{
+    min-width: 140px;
+    padding-right: 30px;
+    padding-top: 10px;
+}
+
+.response input{
+    width: 300px;
+    box-shadow: 3px 3px 2px #888888;
+    padding: 2px;
+}
+
+
+.response label{
+    display: block;
+    text-align: right;
+}
+
+button{
+    background: #3C423D;
+    border-radius: 30px;
+    padding: 10px;
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+    min-width: 120px;
+    box-shadow: 10px 10px 8px #888888;
+}
+
+button:active {
+    outline: none;
+    border: none;
+}
+
+button:focus {
+    outline:0;
+}
+
+button:hover{
+    background: #8E9740;
+    transition: ease-in 300ms;
+}
+
+#alert{
+    padding: 10px;
+    color: white;
+    margin: 10px;
+    font-weight: bold;
+    font-family: sans-serif;
+}

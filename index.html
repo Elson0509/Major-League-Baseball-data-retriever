@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <main>
+        <div class="date">
+            <fieldset>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label>
+                                    Year
+                                </label>
+                            </td>
+                            <td>
+                                <select id="year">
+                                    <option value="2015">2015</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2017">2017</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    Month
+                                </label>
+                            </td>
+                            <td>
+                                <select id="month">
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>
+                                    Day
+                                </label>
+                            </td>
+                            <td>
+                                <select id="day">
+                                    <option value="01">01</option>
+                                    <option value="02">02</option>
+                                    <option value="03">03</option>
+                                    <option value="04">04</option>
+                                    <option value="05">05</option>
+                                    <option value="06">06</option>
+                                    <option value="07">07</option>
+                                    <option value="08">08</option>
+                                    <option value="09">09</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table> 
+                <button onclick="getDataFromURL()">Retrieve</button>
+            </fieldset>
+            
+        </div>
+        <div>
+            <table class="response">
+                <tbody>
+                    <tr>
+                        <td><label>Home Team Name</label></td>
+                        <td><input id="htn" type="text"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Away Team Name</label></td>
+                        <td><input id="atn" type="text"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Winning Pitcher</label></td>
+                        <td><input id="wp" type="text"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Losing Pitcher</label></td>
+                        <td><input id="lp" type="text"></td>
+                    </tr>
+                    <tr>
+                        <td><label>Venue</label></td>
+                        <td><input id="venue" type="text"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="div-buttons">
+            <button onclick="changeGame(-1)">Previous Game</button>
+            <button onclick="changeGame(1)">Next Game</button>
+            <button onclick="saveChanges()">Save Changes</button>
+        </div>
+        <div>
+            <h3 id="alert"></h3>
+        </div>
+        <script>
+            //constants
+            const ISFINISHED = 4;
+            const ISOK = 200;
+            //inputs and alert references
+            var htnInput = document.getElementById("htn");
+            var atnInput = document.getElementById("atn");
+            var wpInput = document.getElementById("wp");
+            var lpInput = document.getElementById("lp");
+            var venueInput = document.getElementById("venue");
+            var alert = document.getElementById("alert");
+            //array of objects and index
+            var games = null;
+            var index=0;
+
+            /*purpuse: get JSON from URL
+              input: nothing
+              output: nothing
+            */
+            function getDataFromURL(){
+                var year = document.getElementById("year").value;
+                var month = document.getElementById("month").value;
+                var day = document.getElementById("day").value;
+                var scoreURL = "http://gd2.mlb.com/components/game/mlb/year_"+year+"/month_"+month+"/day_"+day+"/master_scoreboard.json";
+                console.log(scoreURL);
+                getJSONAsync(scoreURL);
+            }
+
+            /*purpuse: trigger GET requisition from URL
+              input: URL
+              output: nothing
+            */
+            function getJSONAsync(url){
+                updateAlert("#ffcc00", "Loading...");
+                cleanFields()
+                index=0;
+                var request = new XMLHttpRequest();
+                request.onreadystatechange = function(){
+                    if (request.readyState === ISFINISHED && request.status === ISOK) {
+                        var temp = JSON.parse(request.responseText);
+                        games = temp.data.games.game;
+                        console.log(temp);
+                        if(typeof(games) === 'undefined'){
+                            updateAlert("#ff9966", "Sorry. There were no games on that day.");
+                        }
+                        else{
+                            updateFields(index);
+                            var message = games.length;
+                            message += games.length > 1 ? " games were" : "game was";
+                            message+= " retrieved from that day.";
+                            updateAlert("#99cc33", message);
+                        }
+                    }
+                };
+                request.open("GET", url);
+                request.send();
+            }
+
+            /*purpuse: Change the game data in the fields
+              input: value of index of the array (int)
+              output: nothing
+            */
+            function changeGame(value){
+                if(value>0){
+                    if(index + value >= games.length){
+                        updateAlert("#ff9966", "This is the last game of the day");
+                    }
+                    else{
+                        index+=value;
+                        updateFields(index);
+                    }
+                }
+                else{
+                    if(index==0){
+                        updateAlert("#ff9966", "This is the first game of the day");
+                    }
+                    else{
+                        index+=value;
+                        updateFields(index);
+                    }
+                }
+            }
+
+            /*purpuse: update information of the fields
+              input: value of index of the array (int)
+              output: nothing
+            */
+            function updateFields(ind){
+                htnInput.value = games[ind].home_team_name;
+                atnInput.value = games[ind].away_team_name;
+                wpInput.value = games[ind].winning_pitcher.first + " " + games[ind].winning_pitcher.last;
+                lpInput.value = games[ind].losing_pitcher.first + " " + games[ind].losing_pitcher.last;
+                venueInput.value = games[ind].venue;
+            }
+
+            /*purpuse: update alert information
+              input: value of background color (string), message (string)
+              output: nothing
+            */
+            function updateAlert(color, message){
+                alert.style.backgroundColor = color;
+                alert.innerText=message;
+            }
+
+            /*purpuse: clean the fields
+              input: value of background color (string), message (string)
+              output: nothing
+            */
+            function cleanFields(){
+                htnInput.value = "";
+                atnInput.value = "";
+                wpInput.value = "";
+                lpInput.value = "";
+                venueInput.value = "";
+            }
+
+            /*purpuse: check if fields are not empty
+              input: nothing
+              output: true if they are not empty of false if at least one of them is empty
+            */
+            function checkFields(){
+                return htnInput.value != "" && atnInput.value != "" && wpInput.value != "" && lpInput.value != "" && venueInput.value != "";
+            }
+
+            /*purpuse: save changes
+              input: nothing
+              output: nothing
+            */
+            function saveChanges(){
+                if(typeof(games) === 'undefined'){
+                    updateAlert("#ff9966", "There is nothing to be saved");
+                }
+                else{
+                    if(checkFields())
+                        updateAlert("#99cc33", "Changes were successfully saved!");
+                    else
+                        updateAlert("#ff9966", "You cannot save empty fields!");
+                }
+            }
+        </script>
+    </main>
+</body>
+</html>
